@@ -1,7 +1,7 @@
 {
-	"name": "obsidian-sample-plugin",
+	"name": "flowtick",
 	"version": "1.0.0",
-	"description": "This is a sample plugin for Obsidian (https://obsidian.md)",
+	"description": "A simple tool can show your task progress percent with progress bar.",
 	"main": "main.js",
 	"module": "true",
 	"scripts": {
@@ -10,7 +10,7 @@
 		"version": "node version-bump.mjs && git add manifest.json versions.json"
 	},
 	"keywords": [],
-	"author": "",
+	"author": "mmaoteacher",
 	"license": "MIT",
 	"devDependencies": {
 		"@types/luxon": "^3.7.1",
@@ -23,5 +23,8 @@
 		"tslib": "2.4.0",
 		"typescript": "4.7.4"
 	},
-	"dependencies": {}
+	"dependencies": {},
+	"engines": {
+		"node": ">=24"
+	}
 }
