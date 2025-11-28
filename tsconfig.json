@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",                  // 保持原本
+    "module": "ESNext",
+    "target": "ES2022",             // 升級到 ES2022
+    "moduleResolution": "node",
+    "allowJs": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "inlineSourceMap": true,
+    "inlineSources": true,
+    "importHelpers": true,
+    "isolatedModules": true,
+    "lib": ["DOM", "ES2022"]        // 升級到 ES2022
+  },
+  "include": ["**/*.ts", "**/*.d.ts"]  // 加入 d.ts 才能讀到套件 type
+}
