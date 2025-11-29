@@ -1,13 +1,13 @@
-import { App, Plugin, PluginSettingTab, Setting } from "obsidian";
+import { App, Plugin, PluginSettingTab, Setting } from 'obsidian';
 
 export interface FlowTickSettings {
   refreshInterval: number;
-  colorMode: "default";
+  colorMode: 'default';
 }
 
 export const DEFAULT_SETTINGS: FlowTickSettings = {
   refreshInterval: 1000,
-  colorMode: "default",
+  colorMode: 'default',
 };
 
 interface FlowTickPlugin extends Plugin {
@@ -28,9 +28,9 @@ export class FlowTickSettingTab extends PluginSettingTab {
     containerEl.empty();
 
     new Setting(containerEl)
-      .setName("Refresh Interval")
-      .setDesc("How often FlowTick progress bars re-render (ms)")
-      .addText(text =>
+      .setName('Refresh Interval')
+      .setDesc('How often FlowTick progress bars re-render (ms)')
+      .addText((text) =>
         text
           .setValue(String(this.plugin.settings.refreshInterval))
           .onChange(async (value) => {
@@ -40,15 +40,15 @@ export class FlowTickSettingTab extends PluginSettingTab {
       );
 
     new Setting(containerEl)
-      .setName("Color Mode")
-      .setDesc("Default color rule: 1-20 red, 21-99 green, 100 blue")
-      .addDropdown(drop =>
+      .setName('Color Mode')
+      .setDesc('Default color rule: 1-20 red, 21-99 green, 100 blue')
+      .addDropdown((drop) =>
         drop
-          .addOption("default", "Default Color Mode")
+          .addOption('default', 'Default Color Mode')
           .setValue(this.plugin.settings.colorMode)
           .onChange(async (value) => {
-            if (value !== "default") {
-              throw new Error("Unsupported color mode");
+            if (value !== 'default') {
+              throw new Error('Unsupported color mode');
             }
 
             this.plugin.settings.colorMode = value;

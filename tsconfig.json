@@ -1,17 +1,36 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",                  // 保持原本
-    "module": "ESNext",
-    "target": "ES2022",             // 升級到 ES2022
-    "moduleResolution": "node",
+    /* Language and Environment */
+    "target": "ES2022",
+    "lib": [
+      "DOM",
+      "ES2022"
+    ],
+    
+    /* Modules */
+    "baseUrl": ".",
+    "module": "es2022",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    
+    /* JavaScript Support */
     "allowJs": true,
-    "noImplicitAny": true,
-    "strictNullChecks": true,
+    
+    /* Emit */
     "inlineSourceMap": true,
     "inlineSources": true,
     "importHelpers": true,
+    
+    /* Type Checking */
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    
+    /* Interop Constraints */
     "isolatedModules": true,
-    "lib": ["DOM", "ES2022"]        // 升級到 ES2022
   },
-  "include": ["**/*.ts", "**/*.d.ts"]  // 加入 d.ts 才能讀到套件 type
+  "exclude": [
+    "node_modules",
+    "**.mjs",
+    "**.js"
+  ],
 }

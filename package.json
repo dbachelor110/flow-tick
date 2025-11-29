@@ -3,7 +3,7 @@
 	"version": "1.0.0",
 	"description": "A simple tool can show your task progress percent with progress bar.",
 	"main": "main.js",
-	"module": "true",
+	"type": "module",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
 		"build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
@@ -13,15 +13,23 @@
 	"author": "mmaoteacher",
 	"license": "MIT",
 	"devDependencies": {
+		"@codemirror/state": "6.5.0",
+		"@codemirror/view": "6.38.6",
+		"@stylistic/eslint-plugin": "^5.6.1",
 		"@types/luxon": "^3.7.1",
 		"@types/node": "^16.11.6",
-		"@typescript-eslint/eslint-plugin": "5.29.0",
-		"@typescript-eslint/parser": "5.29.0",
 		"builtin-modules": "3.3.0",
 		"esbuild": "^0.27.0",
+		"eslint": "^9.39.1",
+		"eslint-config-prettier": "^10.1.8",
+		"eslint-plugin-import": "^2.32.0",
+		"eslint-plugin-n": "^17.23.1",
+		"eslint-plugin-prettier": "^5.5.4",
 		"obsidian": "latest",
+		"prettier": "^3.7.2",
 		"tslib": "2.4.0",
-		"typescript": "4.7.4"
+		"typescript": "5.9.3",
+		"typescript-eslint": "^8.48.0"
 	},
 	"dependencies": {},
 	"engines": {
