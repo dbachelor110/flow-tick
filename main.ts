@@ -1,4 +1,9 @@
-import { ListItemCache, MarkdownView, Plugin } from 'obsidian';
+import {
+  ListItemCache,
+  MarkdownPostProcessorContext,
+  MarkdownView,
+  Plugin,
+} from 'obsidian';
 
 import { renderFlowTickBar } from 'src/progress';
 import {
@@ -17,6 +22,18 @@ interface listItemNode {
 export default class FlowTick extends Plugin {
   settings: FlowTickSettings;
 
+  flowTickContainerTable = new Map<number, Record<string, HTMLElement>>();
+
+  get currentViewMode() {
+    const activeView = this.app.workspace.getActiveViewOfType(MarkdownView);
+
+    if (!activeView) {
+      throw new Error('No active markdown view');
+    }
+
+    return activeView.getMode();
+  }
+
   async onload() {
     console.log('FlowTick start loading');
 
@@ -26,35 +43,17 @@ export default class FlowTick extends Plugin {
     // Handle ```flowtick``` code blocks
     this.registerMarkdownCodeBlockProcessor(
       'flowtick',
-      async (source, element, ctx) => {
-        const sectionInfo = ctx.getSectionInfo(element);
-        const lineNumber = sectionInfo?.lineStart ?? -1;
+      async (_source, element, ctx) => {
+        const startLine = this.getElementLineNumber(element, ctx);
 
-        const parent = element.parentElement!;
-        const children = Array.from(parent.children);
-        const index = children.indexOf(element); // ← Find the element's position among its siblings
+        // Create or update the current flowtick container
+        const container = this.insertFlowTickContainer(element, startLine);
 
-        // Find the next .flowtick-code-block element that appears after the current element
-        const nextElement = parent.querySelector<HTMLElement>(
-          `:scope > :nth-child(n+${index + 2}).block-language-flowtick`
-        );
+        // Register the flowtick container for later updates
+        this.registerFlowTickContainer(container, startLine);
 
-        const endLine = nextElement
-          ? ctx.getSectionInfo(nextElement)?.lineStart
-          : undefined;
-
-        const container =
-          element.find('div.flowtick-container') ??
-          element.createDiv({
-            cls: 'flowtick-container',
-            attr: { 'start-line': lineNumber },
-          });
-
-        if (endLine !== undefined) {
-          container.setAttr('end-line', endLine.toString());
-        }
-
-        this.renderFlowTick(container);
+        // Update the previous flowtick container's end line
+        this.updatePreviousFlowTickContainer(startLine);
       }
     );
 
@@ -74,6 +73,67 @@ export default class FlowTick extends Plugin {
     await this.saveData(this.settings);
   }
 
+  private getElementLineNumber(
+    element: HTMLElement,
+    ctx: MarkdownPostProcessorContext
+  ) {
+    const sectionInfo = ctx.getSectionInfo(element);
+    return sectionInfo?.lineStart ?? -1;
+  }
+
+  private insertFlowTickContainer(
+    codeBlockElement: HTMLElement,
+    startLine: number
+  ) {
+    const startLineText = startLine.toString();
+    const container = codeBlockElement.find('div.flowtick-container');
+
+    if (container) {
+      container.setAttribute('start-line', startLineText);
+      return container;
+    } else {
+      return codeBlockElement.createDiv({
+        cls: 'flowtick-container',
+        attr: { 'start-line': startLineText },
+      });
+    }
+  }
+
+  private registerFlowTickContainer(container: HTMLElement, startLine: number) {
+    const currentViewMode = this.currentViewMode;
+    if (!currentViewMode) {
+      return;
+    }
+
+    const currentPathFlowTickContainerTable =
+      this.flowTickContainerTable.get(startLine) ?? {};
+
+    this.flowTickContainerTable.set(startLine, {
+      ...currentPathFlowTickContainerTable,
+      [currentViewMode]: container,
+    });
+  }
+
+  private updatePreviousFlowTickContainer(lineNumber: number) {
+    const previousFlowTickContainerIndex = [
+      ...this.flowTickContainerTable.keys(),
+    ]
+      .filter((line) => line < lineNumber)
+      .sort((a, b) => a - b)
+      .pop();
+
+    if (previousFlowTickContainerIndex !== undefined) {
+      const previousFlowTickContainer = this.flowTickContainerTable.get(
+        previousFlowTickContainerIndex
+      )?.[this.currentViewMode];
+
+      previousFlowTickContainer?.setAttribute(
+        'end-line',
+        lineNumber.toString()
+      );
+    }
+  }
+
   private renderFlowTick(flowTickContainerEl: Element) {
     const rawStartLine = flowTickContainerEl.getAttribute('start-line');
     const rawEndLine = flowTickContainerEl.getAttribute('end-line');
@@ -83,13 +143,7 @@ export default class FlowTick extends Plugin {
 
     // ---- (2) Filter listItems belonging to this flowtick interval ----
     const itemsInRange = this.getListItemsInRange(startLine, endLine);
-    if (itemsInRange.length === 0) {
-      return;
-    }
-
     const listItemTable = this.getListItemTable(itemsInRange);
-
-    console.info(listItemTable);
 
     // ---- (4) Calculate completion for multi-level checklists ----
     const topLevelTotal = listItemTable.size;
@@ -99,8 +153,6 @@ export default class FlowTick extends Plugin {
     );
     const percent = topLevelSum / topLevelTotal;
 
-    console.log('FlowTick percent:', percent);
-
     // ---- (5) Render the progress bar ----
     renderFlowTickBar(flowTickContainerEl, percent * 100);
   }
@@ -109,7 +161,6 @@ export default class FlowTick extends Plugin {
     startLine?: number,
     endLine?: number
   ): ListItemCache[] {
-    console.log('FlowTick getListItemsInRange:', { startLine, endLine });
     const currentFile = this.app.workspace.getActiveFile();
     if (!currentFile) {
       return [];
@@ -197,13 +248,13 @@ export default class FlowTick extends Plugin {
   private updateAllFlowTick() {
     const activeView = this.app.workspace.getActiveViewOfType(MarkdownView);
 
-    console.log('FlowTick updateAllFlowTick in view:');
-    console.info(activeView);
-    console.log('current view mode:', activeView?.getMode());
+    // console.log('FlowTick updateAllFlowTick in view:');
+    // console.info(activeView);
+    // console.log('current view mode:', activeView?.getMode());
 
     const currentViewMode = activeView?.getMode();
     if (!currentViewMode) {
-      console.log('FlowTick no active markdown view, skip update');
+      // console.log('FlowTick no active markdown view, skip update');
       return;
     }
 
