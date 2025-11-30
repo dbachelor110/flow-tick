@@ -162,22 +162,19 @@ export default class FlowTick extends Plugin {
     endLine?: number
   ): ListItemCache[] {
     const currentFile = this.app.workspace.getActiveFile();
-    if (!currentFile) {
-      return [];
-    }
 
-    const fileCache = this.app.metadataCache.getFileCache(currentFile);
+    const fileCache = currentFile
+      ? this.app.metadataCache.getFileCache(currentFile)
+      : null;
+
     const listItems = fileCache?.listItems;
-    if (!listItems) {
-      return [];
-    }
 
-    const itemsInRange = listItems.filter((li) => {
+    const itemsInRange = listItems?.filter((li) => {
       const line = li.position.start.line;
       return this.isNumberInRange(line, startLine, endLine);
     });
 
-    return itemsInRange;
+    return itemsInRange ?? [];
   }
 
   private isNumberInRange(
