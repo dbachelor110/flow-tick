@@ -23,7 +23,7 @@ export default class FlowTick extends Plugin {
     await this.loadSettings();
     this.addSettingTab(new FlowTickSettingTab(this.app, this));
 
-    // 處理 ```flowtick``` 區塊
+    // Handle ```flowtick``` code blocks
     this.registerMarkdownCodeBlockProcessor(
       'flowtick',
       async (source, element, ctx) => {
@@ -32,9 +32,9 @@ export default class FlowTick extends Plugin {
 
         const parent = element.parentElement!;
         const children = Array.from(parent.children);
-        const index = children.indexOf(element); // ← 找到 element 在同層的位置
+        const index = children.indexOf(element); // ← Find the element's position among its siblings
 
-        // 尋找下一個出現在 element 後面的 .flowtick-code-block 元素
+        // Find the next .flowtick-code-block element that appears after the current element
         const nextElement = parent.querySelector<HTMLElement>(
           `:scope > :nth-child(n+${index + 2}).block-language-flowtick`
         );
@@ -81,7 +81,7 @@ export default class FlowTick extends Plugin {
     const startLine = rawStartLine ? Number(rawStartLine) : undefined;
     const endLine = rawEndLine ? Number(rawEndLine) : undefined;
 
-    // ---- (2) 過濾屬於這個 flowtick 區間的 listItems ----
+    // ---- (2) Filter listItems belonging to this flowtick interval ----
     const itemsInRange = this.getListItemsInRange(startLine, endLine);
     if (itemsInRange.length === 0) {
       return;
@@ -91,7 +91,7 @@ export default class FlowTick extends Plugin {
 
     console.info(listItemTable);
 
-    // ---- (4) 計算多階層 checklist 完成度 ----
+    // ---- (4) Calculate completion for multi-level checklists ----
     const topLevelTotal = listItemTable.size;
     const topLevelSum = [...listItemTable.values()].reduce(
       (sum, node) => sum + this.calcCompletion(node),
@@ -101,7 +101,7 @@ export default class FlowTick extends Plugin {
 
     console.log('FlowTick percent:', percent);
 
-    // ---- (5) 渲染 progress bar ----
+    // ---- (5) Render the progress bar ----
     renderFlowTickBar(flowTickContainerEl, percent * 100);
   }
 

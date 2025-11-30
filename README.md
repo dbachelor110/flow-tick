@@ -1,94 +1,74 @@
-# Obsidian Sample Plugin
+# FlowTick for Obsidian
 
-This is a sample plugin for Obsidian (https://obsidian.md).
+FlowTick is an Obsidian plugin that automatically generates and updates a progress bar based on the completion of checklist items in your notes.
 
-This project uses TypeScript to provide type checking and documentation.
-The repo depends on the latest plugin API (obsidian.d.ts) in TypeScript Definition format, which contains TSDoc comments describing what it does.
+It's perfect for tracking progress on long task lists, project milestones, or any document with checklists. The progress bar gives you a quick visual indicator of how much you've completed.
 
-This sample plugin demonstrates some of the basic functionality the plugin API can do.
-- Adds a ribbon icon, which shows a Notice when clicked.
-- Adds a command "Open Sample Modal" which opens a Modal.
-- Adds a plugin setting tab to the settings page.
-- Registers a global click event and output 'click' to the console.
-- Registers a global interval which logs 'setInterval' to the console.
+![FlowTick Demo](https://raw.githubusercontent.com/ice-first/obsidian-flow-tick/main/assets/demo.gif)
 
-## First time developing plugins?
+## Features
 
-Quick starting guide for new plugin devs:
+- **Auto-updating Progress Bar**: The progress bar automatically refreshes at a configurable interval, so it always stays up-to-date with your checklist.
+- **Nested Checklist Support**: FlowTick correctly calculates progress for nested checklists. A parent task's completion is the *average* of its direct sub-tasks' completion.
+- **Multiple Progress Bars**: You can have multiple `flowtick` blocks in a single note, each tracking the progress of the checklist items that follow it.
+- **Dynamic Coloring**: The progress bar changes color to reflect the current completion status:
+    - **Red**: Below 21%
+    - **Green**: Between 21% and 99%
+    - **Blue**: 100% complete!
+- **Lightweight and Simple**: Just add a small code block and it works. No complex setup required.
 
-- Check if [someone already developed a plugin for what you want](https://obsidian.md/plugins)! There might be an existing plugin similar enough that you can partner up with.
-- Make a copy of this repo as a template with the "Use this template" button (login to GitHub if you don't see it).
-- Clone your repo to a local development folder. For convenience, you can place this folder in your `.obsidian/plugins/your-plugin-name` folder.
-- Install NodeJS, then run `npm i` in the command line under your repo folder.
-- Run `npm run dev` to compile your plugin from `main.ts` to `main.js`.
-- Make changes to `main.ts` (or create new `.ts` files). Those changes should be automatically compiled into `main.js`.
-- Reload Obsidian to load the new version of your plugin.
-- Enable plugin in settings window.
-- For updates to the Obsidian API run `npm update` in the command line under your repo folder.
+## How to Use
 
-## Releasing new releases
+1.  Create a `flowtick` code block by typing ` ```flowtick ``` ` in your note.
+2.  Add checklist items (`- [ ]` or `- [x]`) below the code block.
+3.  The progress bar will appear and track the completion of all checklist items between the `flowtick` block and the next `flowtick` block (or the end of the file).
 
-- Update your `manifest.json` with your new version number, such as `1.0.1`, and the minimum Obsidian version required for your latest release.
-- Update your `versions.json` file with `"new-plugin-version": "minimum-obsidian-version"` so older versions of Obsidian can download an older version of your plugin that's compatible.
-- Create new GitHub release using your new version number as the "Tag version". Use the exact version number, don't include a prefix `v`. See here for an example: https://github.com/obsidianmd/obsidian-sample-plugin/releases
-- Upload the files `manifest.json`, `main.js`, `styles.css` as binary attachments. Note: The manifest.json file must be in two places, first the root path of your repository and also in the release.
-- Publish the release.
+### Example
 
-> You can simplify the version bump process by running `npm version patch`, `npm version minor` or `npm version major` after updating `minAppVersion` manually in `manifest.json`.
-> The command will bump version in `manifest.json` and `package.json`, and add the entry for the new version to `versions.json`
+Here is a simple example:
 
-## Adding your plugin to the community plugin list
+````markdown
+` ``flowtick`` `
 
-- Check the [plugin guidelines](https://docs.obsidian.md/Plugins/Releasing/Plugin+guidelines).
-- Publish an initial version.
-- Make sure you have a `README.md` file in the root of your repo.
-- Make a pull request at https://github.com/obsidianmd/obsidian-releases to add your plugin.
+- [x] Task 1
+- [ ] Task 2
+  - [x] Sub-task 2.1
+  - [x] Sub-task 2.2
+  - [ ] Sub-task 2.3
+- [ ] Task 3
+````
 
-## How to use
+In this example:
+- `Task 1` is 100% complete.
+- `Task 2` is the average of its sub-tasks, so it is (100 + 100 + 0) / 3 = 66.7% complete.
+- `Task 3` is 0% complete.
+- The overall progress is the average of the top-level tasks: (100 + 66.7 + 0) / 3 = **55.6%**.
 
-- Clone this repo.
-- Make sure your NodeJS is at least v16 (`node --version`).
-- `npm i` or `yarn` to install dependencies.
-- `npm run dev` to start compilation in watch mode.
+## Settings
 
-## Manually installing the plugin
+You can configure the refresh interval for the progress bars in the plugin settings tab.
+- **Refresh Interval (ms)**: The time in milliseconds between each update of the progress bars. The default is `1000` (1 second).
 
-- Copy over `main.js`, `styles.css`, `manifest.json` to your vault `VaultFolder/.obsidian/plugins/your-plugin-id/`.
+## How to Install
 
-## Improve code quality with eslint (optional)
-- [ESLint](https://eslint.org/) is a tool that analyzes your code to quickly find problems. You can run ESLint against your plugin to find common bugs and ways to improve your code. 
-- To use eslint with this project, make sure to install eslint from terminal:
-  - `npm install -g eslint`
-- To use eslint to analyze this project use this command:
-  - `eslint main.ts`
-  - eslint will then create a report with suggestions for code improvement by file and line number.
-- If your source code is in a folder, such as `src`, you can use eslint with this command to analyze all files in that folder:
-  - `eslint ./src/`
+### From Community Plugins (Recommended)
 
-## Funding URL
+1.  Open **Settings** in Obsidian.
+2.  Go to **Community plugins**.
+3.  Make sure "Safe mode" is **off**.
+4.  Click **Browse** to open the community plugins list.
+5.  Search for "FlowTick".
+6.  Click **Install**, and then **Enable**.
 
-You can include funding URLs where people who use your plugin can financially support it.
+### Manual Installation
 
-The simple way is to set the `fundingUrl` field to your link in your `manifest.json` file:
+1.  Download the `main.js`, `manifest.json`, and `styles.css` files from the [latest release](https://github.com/ice-first/obsidian-flow-tick/releases).
+2.  Go to your Obsidian vault's plugin folder: `VaultFolder/.obsidian/plugins/`.
+3.  Create a new folder named `flow-tick`.
+4.  Copy the downloaded files into the new `flow-tick` folder.
+5.  Reload Obsidian.
+6.  Go to **Settings** -> **Community plugins**, find "FlowTick", and enable it.
 
-```json
-{
-    "fundingUrl": "https://buymeacoffee.com"
-}
-```
+## Contributing
 
-If you have multiple URLs, you can also do:
-
-```json
-{
-    "fundingUrl": {
-        "Buy Me a Coffee": "https://buymeacoffee.com",
-        "GitHub Sponsor": "https://github.com/sponsors",
-        "Patreon": "https://www.patreon.com/"
-    }
-}
-```
-
-## API Documentation
-
-See https://github.com/obsidianmd/obsidian-api
+Contributions, issues, and feature requests are welcome! Feel free to check the [issues page](https://github.com/ice-first/obsidian-flow-tick/issues).
