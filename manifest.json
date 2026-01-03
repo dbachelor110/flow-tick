@@ -6,5 +6,6 @@
 	"author": "mmaoteacher",
 	"authorUrl": "https://github.com/dbachelor110",
 	"fundingUrl": "https://obsidian.md/pricing",
-	"isDesktopOnly": false
+	"isDesktopOnly": false,
+	"version": "1.0.0-develop.1"
 }
