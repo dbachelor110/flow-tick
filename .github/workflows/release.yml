@@ -6,6 +6,10 @@ on:
       - main
       - develop
 
+concurrency:
+  group: release-workflow-lock
+  cancel-in-progress: false
+
 permissions:
   contents: write # to be able to publish a GitHub release
   issues: write # to be able to comment on released issues
