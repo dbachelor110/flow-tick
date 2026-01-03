@@ -1,6 +1,6 @@
 {
 	"name": "flowtick",
-	"version": "1.0.0",
+	"version": "1.0.0-develop.1",
 	"description": "A simple tool can show your task progress percent with progress bar.",
 	"main": "main.js",
 	"type": "module",
