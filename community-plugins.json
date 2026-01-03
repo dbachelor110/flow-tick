@@ -1,7 +1,7 @@
 {
   "id": "flow-tick",
-  "name": "Flow Tick",
+  "name": "FlowTick",
   "author": "mmaoteacher",
   "description": "A simple tool can show your task progress percent with progress bar.",
-  "repo": "mmaoteacher/flow-tick"
+  "repo": "dbachelor110/flow-tick"
 }

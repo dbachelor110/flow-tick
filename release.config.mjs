@@ -19,6 +19,7 @@ const config = {
       prerelease: true,
     },
   ],
+  tagFormat: '${version}',
   plugins: [
     [
       '@semantic-release/commit-analyzer',
