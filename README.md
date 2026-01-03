@@ -72,3 +72,9 @@ You can configure the refresh interval for the progress bars in the plugin setti
 ## Contributing
 
 Contributions, issues, and feature requests are welcome! Feel free to check the [issues page](https://github.com/ice-first/obsidian-flow-tick/issues).
+
+## Support
+
+If you find this plugin useful, please consider supporting its development:
+
+[![Buy Me A Coffee](https://img.shields.io/badge/buy%20me%20a%20coffee-donate-yellow.svg)](https://buymeacoffee.com/mmaoteacher)
