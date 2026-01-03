@@ -1,3 +1,13 @@
+## [1.3.0](https://github.com/dbachelor110/flow-tick/compare/v1.2.0...1.3.0) (2026-01-03)
+
+### Features
+
+* **release.config:** add tag format for versioning ([6d03807](https://github.com/dbachelor110/flow-tick/commit/6d038074fa7fd1eea4de067688d69862c96d8b6e))
+
+### Bug Fixes
+
+* **community-plugins:** update plugin name to 'FlowTick' and change repository reference ([be3f160](https://github.com/dbachelor110/flow-tick/commit/be3f1601d5968eb98f781866db9d3e2cc413ad91))
+
 ## [1.2.0](https://github.com/dbachelor110/flow-tick/compare/v1.1.1...v1.2.0) (2026-01-03)
 
 ### Features
