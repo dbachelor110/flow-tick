@@ -242,7 +242,7 @@ export default class FlowTick extends Plugin {
     return sum / total;
   }
 
-  private updateAllFlowTick() {
+  private async updateAllFlowTick() {
     const activeView = this.app.workspace.getActiveViewOfType(MarkdownView);
 
     // console.log('FlowTick updateAllFlowTick in view:');
@@ -255,6 +255,10 @@ export default class FlowTick extends Plugin {
       return;
     }
 
+    if (activeView?.file) {
+      this.syncFlowTickPositions(activeView, currentViewMode);
+    }
+
     const querySelector =
       currentViewMode === 'source'
         ? '.markdown-source-view .flowtick-container'
@@ -264,5 +268,101 @@ export default class FlowTick extends Plugin {
     elements.forEach((element) => {
       this.renderFlowTick(element);
     });
+  }
+
+  private syncFlowTickPositions(
+    activeView: MarkdownView,
+    currentViewMode: string
+  ) {
+    const file = activeView.file;
+    if (!file) {
+      return;
+    }
+
+    const cache = this.app.metadataCache.getFileCache(file);
+    if (!cache || !cache.sections) {
+      return;
+    }
+
+    const editor = activeView.editor;
+    if (!editor) {
+      return;
+    }
+
+    // Find all flowtick blocks in the cache
+    const flowtickBlocks = cache.sections.filter((section) => {
+      if (section.type !== 'code') {
+        return false;
+      }
+      // Check the first line of the block for the language identifier
+      // section.position.start.line is where \`\`\`flowtick starts
+      const startLine = section.position.start.line;
+      const lineContent = editor.getLine(startLine);
+      return lineContent?.trim().toLowerCase().startsWith('```flowtick');
+    });
+
+    if (flowtickBlocks.length === 0) {
+      return;
+    }
+
+    // Find DOM elements
+    const querySelector =
+      currentViewMode === 'source'
+        ? '.markdown-source-view .flowtick-container'
+        : '.markdown-preview-view .flowtick-container';
+
+    const elements = document.querySelectorAll(querySelector);
+
+    // Sync attributes for matched blocks
+    for (let i = 0; i < Math.min(flowtickBlocks.length, elements.length); i++) {
+      const block = flowtickBlocks[i];
+      const element = elements[i];
+
+      const newStartLine = block.position.start.line;
+
+      let newEndLine = -1;
+      if (i < flowtickBlocks.length - 1) {
+        newEndLine = flowtickBlocks[i + 1].position.start.line;
+      }
+
+      if (element instanceof HTMLElement) {
+        const currentStart = element.getAttribute('start-line');
+        if (currentStart !== newStartLine.toString()) {
+          element.setAttribute('start-line', newStartLine.toString());
+        }
+
+        if (newEndLine !== -1) {
+          const currentEnd = element.getAttribute('end-line');
+          if (currentEnd !== newEndLine.toString()) {
+            element.setAttribute('end-line', newEndLine.toString());
+          }
+        } else {
+          element.removeAttribute('end-line');
+        }
+      }
+
+      // Update the table to reflect the new position
+      // First, clean up any old entry for this view mode that might conflict or be stale
+      // This is a bit brute-force: iterate and remove current element if found elsewhere
+      for (const [line, record] of this.flowTickContainerTable.entries()) {
+        if (record[currentViewMode] === element) {
+          if (line !== newStartLine) {
+            delete record[currentViewMode];
+            if (Object.keys(record).length === 0) {
+              this.flowTickContainerTable.delete(line);
+            }
+          }
+        }
+      }
+
+      // Set the new entry
+      const currentPathFlowTickContainerTable =
+        this.flowTickContainerTable.get(newStartLine) ?? {};
+
+      this.flowTickContainerTable.set(newStartLine, {
+        ...currentPathFlowTickContainerTable,
+        [currentViewMode]: element as HTMLElement,
+      });
+    }
   }
 }
