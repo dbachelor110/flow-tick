@@ -1,3 +1,9 @@
+## [1.1.1](https://github.com/dbachelor110/flow-tick/compare/v1.1.0...v1.1.1) (2026-01-03)
+
+### Bug Fixes
+
+* **github/actions:** add concurrency settings to release workflow ([9401256](https://github.com/dbachelor110/flow-tick/commit/94012564c2bfe4a3c6a471bea08b214f2de11ad6))
+
 ## [1.1.0](https://github.com/dbachelor110/flow-tick/compare/v1.0.0...v1.1.0) (2026-01-03)
 
 ### Features
