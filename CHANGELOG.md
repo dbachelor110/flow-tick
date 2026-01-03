@@ -1,3 +1,9 @@
+## [1.1.0](https://github.com/dbachelor110/flow-tick/compare/v1.0.0...v1.1.0) (2026-01-03)
+
+### Features
+
+* **funding:** add funding url and support button ([33e2e21](https://github.com/dbachelor110/flow-tick/commit/33e2e21d4cc9d8bf784aadc0d6dfdf5fe00233aa))
+
 ## 1.0.0 (2026-01-03)
 
 ### Features
