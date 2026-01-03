@@ -1,3 +1,9 @@
+## [1.2.0](https://github.com/dbachelor110/flow-tick/compare/v1.1.1...v1.2.0) (2026-01-03)
+
+### Features
+
+* **.nvmrc:** add .nvmrc file with Node.js version 24 ([eef3eac](https://github.com/dbachelor110/flow-tick/commit/eef3eac22b8ae95545e19662e04f6d5c70b7a75e))
+
 ## [1.1.1](https://github.com/dbachelor110/flow-tick/compare/v1.1.0...v1.1.1) (2026-01-03)
 
 ### Bug Fixes
