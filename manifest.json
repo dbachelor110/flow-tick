@@ -1,7 +1,6 @@
 {
 	"id": "flow-tick",
 	"name": "FlowTick",
-	"version": "1.0.0",
 	"minAppVersion": "0.15.0",
 	"description": "Auto-updating progress bar based on checkbox ratio using flowtick code blocks.",
 	"author": "mmaoteacher",
