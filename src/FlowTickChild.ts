@@ -27,14 +27,16 @@ class FlowTickChild extends MarkdownRenderChild {
   static readonly BAR_CLASS_NAME = 'flowtick-bar';
   static readonly FILL_CLASS_NAME = 'flowtick-fill';
 
-  progress: number;
-
-  readonly id: string = crypto.randomUUID();
-  readonly plugin: Plugin;
   readonly CURRENT_VIEW_MODE: MarkdownViewModeType;
+  readonly id: string = crypto.randomUUID();
+
+  readonly plugin: Plugin;
   readonly ctx: MarkdownPostProcessorContext;
+
   readonly getProgressColor = getProgressColor;
   readonly onunloadCallback: FlowTickChildOption['onunloadCallback'];
+
+  private progress: number;
   private checklistAnalyzer: ChecklistAnalyzer;
   private logger: Console;
 
@@ -49,7 +51,6 @@ class FlowTickChild extends MarkdownRenderChild {
   }: FlowTickChildOption) {
     super(containerEl);
 
-    this.containerElement = containerEl;
     this.CURRENT_VIEW_MODE = currentViewMode;
     this.plugin = plugin;
     this.onunloadCallback = onunloadCallback;
@@ -131,9 +132,9 @@ class FlowTickChild extends MarkdownRenderChild {
   }
 
   renderFlowTickBar() {
-    if (!this.containerElement) {
-      this.logger.log('this.containerElement:');
-      this.logger.log(this.containerElement);
+    if (!this.containerEl) {
+      this.logger.log('this.containerEl:');
+      this.logger.log(this.containerEl);
       this.logger.log('this.startLine:');
       this.logger.log(this.startLine);
       return;
@@ -149,8 +150,8 @@ class FlowTickChild extends MarkdownRenderChild {
     const color = this.getProgressColor(this.progress);
 
     const flowtickBarEl =
-      this.containerElement.find(`.${FlowTickChild.BAR_CLASS_NAME}`) ??
-      this.containerElement.createDiv(FlowTickChild.BAR_CLASS_NAME);
+      this.containerEl.find(`.${FlowTickChild.BAR_CLASS_NAME}`) ??
+      this.containerEl.createDiv(FlowTickChild.BAR_CLASS_NAME);
 
     const flowtickFillEl =
       flowtickBarEl.find(`.${FlowTickChild.FILL_CLASS_NAME}`) ??
@@ -163,7 +164,7 @@ class FlowTickChild extends MarkdownRenderChild {
   }
 
   private getStartLineForBlock() {
-    const sectionInfo = this.ctx.getSectionInfo(this.containerElement);
+    const sectionInfo = this.ctx.getSectionInfo(this.containerEl);
     return sectionInfo?.lineStart ?? -1;
   }
 
@@ -176,7 +177,7 @@ class FlowTickChild extends MarkdownRenderChild {
       .sort((a, b) => a - b);
 
     const currentIndex = flowtickSections.indexOf(this.startLine);
-    // 如果是最後一個 block，則 end-line 為 undefined 或文件結尾
+    // if is last block, return undefined
     return flowtickSections[currentIndex + 1];
   }
 
@@ -212,7 +213,7 @@ class FlowTickChild extends MarkdownRenderChild {
     const progress = Math.round(rate * 100);
 
     this.logger.log(
-      `FlowTickChild at line ${this.startLine}->${this.endLine}; progress: ${progress}%`
+      `FlowTickChild ${this.id} at line ${this.startLine}->${this.endLine}; progress: ${progress}%`
     );
 
     return progress;
