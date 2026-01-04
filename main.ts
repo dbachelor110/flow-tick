@@ -1,10 +1,11 @@
 import {
-  ListItemCache,
   MarkdownPostProcessorContext,
   MarkdownView,
   Plugin,
+  TFile,
 } from 'obsidian';
 
+import { ChecklistAnalyzer } from 'src/checklist';
 import { renderFlowTickBar } from 'src/progress';
 import {
   DEFAULT_SETTINGS,
@@ -12,31 +13,36 @@ import {
   FlowTickSettingTab,
 } from 'src/settings';
 
-interface listItemNode {
-  item: ListItemCache;
-  line: number;
-  task: string | undefined;
-  childrenTable: Map<string, listItemNode>;
-}
-
 export default class FlowTick extends Plugin {
   settings: FlowTickSettings;
+  checklistAnalyzer: ChecklistAnalyzer;
 
   flowTickContainerTable = new Map<number, Record<string, HTMLElement>>();
 
-  get currentViewMode() {
+  private readonly FLOWTICK_CONTAINER_CLASS_NAME = 'flowtick-container';
+
+  private readonly SOURCE_VIEW_CLASS_NAME = 'markdown-source-view';
+  private readonly PREVIEW_VIEW_CLASS_NAME = 'markdown-preview-view';
+
+  get currentViewInfo() {
     const activeView = this.app.workspace.getActiveViewOfType(MarkdownView);
 
     if (!activeView) {
       throw new Error('No active markdown view');
     }
 
-    return activeView.getMode();
+    const currentViewInfo = {
+      activeView,
+      mode: activeView.getMode(),
+    };
+
+    return currentViewInfo;
   }
 
   async onload() {
     console.log('FlowTick start loading');
 
+    this.checklistAnalyzer = new ChecklistAnalyzer(this.app);
     await this.loadSettings();
     this.addSettingTab(new FlowTickSettingTab(this.app, this));
 
@@ -44,6 +50,7 @@ export default class FlowTick extends Plugin {
     this.registerMarkdownCodeBlockProcessor(
       'flowtick',
       async (_source, element, ctx) => {
+        console.log('in registerMarkdownCodeBlockProcessor');
         const startLine = this.getElementLineNumber(element, ctx);
 
         // Create or update the current flowtick container
@@ -86,24 +93,23 @@ export default class FlowTick extends Plugin {
     startLine: number
   ) {
     const startLineText = startLine.toString();
-    const container = codeBlockElement.find('div.flowtick-container');
+    const container = codeBlockElement.find(
+      `div.${this.FLOWTICK_CONTAINER_CLASS_NAME}`
+    );
 
     if (container) {
       container.setAttribute('start-line', startLineText);
       return container;
     } else {
       return codeBlockElement.createDiv({
-        cls: 'flowtick-container',
+        cls: this.FLOWTICK_CONTAINER_CLASS_NAME,
         attr: { 'start-line': startLineText },
       });
     }
   }
 
   private registerFlowTickContainer(container: HTMLElement, startLine: number) {
-    const currentViewMode = this.currentViewMode;
-    if (!currentViewMode) {
-      return;
-    }
+    const currentViewMode = this.currentViewInfo.mode;
 
     const currentPathFlowTickContainerTable =
       this.flowTickContainerTable.get(startLine) ?? {};
@@ -125,7 +131,7 @@ export default class FlowTick extends Plugin {
     if (previousFlowTickContainerIndex !== undefined) {
       const previousFlowTickContainer = this.flowTickContainerTable.get(
         previousFlowTickContainerIndex
-      )?.[this.currentViewMode];
+      )?.[this.currentViewInfo.mode];
 
       previousFlowTickContainer?.setAttribute(
         'end-line',
@@ -142,152 +148,40 @@ export default class FlowTick extends Plugin {
     const endLine = rawEndLine ? Number(rawEndLine) : undefined;
 
     // ---- (2) Filter listItems belonging to this flowtick interval ----
-    const itemsInRange = this.getListItemsInRange(startLine, endLine);
-    const listItemTable = this.getListItemTable(itemsInRange);
-
-    // ---- (4) Calculate completion for multi-level checklists ----
-    const topLevelTotal = listItemTable.size;
-    const topLevelSum = [...listItemTable.values()].reduce(
-      (sum, node) => sum + this.calcCompletion(node),
-      0
+    const itemsInRange = this.checklistAnalyzer.getListItemsInRange(
+      startLine,
+      endLine
     );
-    const percent = topLevelSum / topLevelTotal;
+    const percent = this.checklistAnalyzer.getCompletionRate(itemsInRange);
 
     // ---- (5) Render the progress bar ----
     renderFlowTickBar(flowTickContainerEl, percent * 100);
   }
 
-  private getListItemsInRange(
-    startLine?: number,
-    endLine?: number
-  ): ListItemCache[] {
-    const currentFile = this.app.workspace.getActiveFile();
-
-    const fileCache = currentFile
-      ? this.app.metadataCache.getFileCache(currentFile)
-      : null;
-
-    const listItems = fileCache?.listItems;
-
-    const itemsInRange = listItems?.filter((li) => {
-      const line = li.position.start.line;
-      return this.isNumberInRange(line, startLine, endLine);
-    });
-
-    return itemsInRange ?? [];
-  }
-
-  private isNumberInRange(
-    target: number,
-    start?: number,
-    end?: number
-  ): boolean {
-    const afterStart = start === undefined || target >= start;
-    const beforeEnd = end === undefined || target < end;
-    return afterStart && beforeEnd;
-  }
-
-  private getListItemTable(
-    listItems: ListItemCache[]
-  ): Map<string, listItemNode> {
-    const rootItemNodeTable = new Map<string, listItemNode>();
-    const allItemNodeTable = new Map<string, listItemNode>();
-
-    for (const item of listItems) {
-      const line = item.position.start.line;
-
-      const parent = item.parent;
-
-      const node: listItemNode = {
-        item,
-        line,
-        task: item.task,
-        childrenTable: new Map<string, listItemNode>(),
-      };
-
-      const parentIsRoot =
-        allItemNodeTable.get(parent.toString()) === undefined;
-
-      if (parentIsRoot) {
-        const newRootNode: listItemNode = {
-          item,
-          line,
-          task: undefined,
-          childrenTable: new Map<string, listItemNode>(),
-        };
-
-        rootItemNodeTable.set(parent.toString(), newRootNode);
-        allItemNodeTable.set(parent.toString(), newRootNode);
-      }
-
-      allItemNodeTable
-        .get(parent.toString())
-        ?.childrenTable.set(line.toString(), node);
-      allItemNodeTable.set(line.toString(), node);
-    }
-
-    return rootItemNodeTable;
-  }
-
-  private calcCompletion(node: listItemNode): number {
-    const total = node.childrenTable.size;
-    if (total === 0) {
-      return node.task === 'x' ? 1 : 0;
-    }
-
-    const sum = [...node.childrenTable.values()].reduce(
-      (sum, child) => sum + this.calcCompletion(child),
-      0
-    );
-    return sum / total;
-  }
-
   private async updateAllFlowTick() {
-    const activeView = this.app.workspace.getActiveViewOfType(MarkdownView);
+    const { activeView, mode } = this.currentViewInfo;
 
-    // console.log('FlowTick updateAllFlowTick in view:');
-    // console.info(activeView);
-    // console.log('current view mode:', activeView?.getMode());
-
-    const currentViewMode = activeView?.getMode();
-    if (!currentViewMode) {
-      // console.log('FlowTick no active markdown view, skip update');
-      return;
+    if (activeView.file) {
+      this.syncFlowTickPositions(activeView.file, activeView, mode);
     }
 
-    if (activeView?.file) {
-      this.syncFlowTickPositions(activeView, currentViewMode);
-    }
-
-    const querySelector =
-      currentViewMode === 'source'
-        ? '.markdown-source-view .flowtick-container'
-        : '.markdown-preview-view .flowtick-container';
-
-    const elements = document.querySelectorAll(querySelector);
-    elements.forEach((element) => {
+    const flowTickContainers = this.getAllFlowTickContainers();
+    flowTickContainers.forEach((element) => {
       this.renderFlowTick(element);
     });
   }
 
   private syncFlowTickPositions(
+    file: TFile,
     activeView: MarkdownView,
     currentViewMode: string
   ) {
-    const file = activeView.file;
-    if (!file) {
-      return;
-    }
-
     const cache = this.app.metadataCache.getFileCache(file);
     if (!cache || !cache.sections) {
       return;
     }
 
     const editor = activeView.editor;
-    if (!editor) {
-      return;
-    }
 
     // Find all flowtick blocks in the cache
     const flowtickBlocks = cache.sections.filter((section) => {
@@ -305,18 +199,16 @@ export default class FlowTick extends Plugin {
       return;
     }
 
-    // Find DOM elements
-    const querySelector =
-      currentViewMode === 'source'
-        ? '.markdown-source-view .flowtick-container'
-        : '.markdown-preview-view .flowtick-container';
-
-    const elements = document.querySelectorAll(querySelector);
+    const flowTickContainers = this.getAllFlowTickContainers();
 
     // Sync attributes for matched blocks
-    for (let i = 0; i < Math.min(flowtickBlocks.length, elements.length); i++) {
+    for (
+      let i = 0;
+      i < Math.min(flowtickBlocks.length, flowTickContainers.length);
+      i++
+    ) {
       const block = flowtickBlocks[i];
-      const element = elements[i];
+      const element = flowTickContainers[i];
 
       const newStartLine = block.position.start.line;
 
@@ -364,5 +256,21 @@ export default class FlowTick extends Plugin {
         [currentViewMode]: element as HTMLElement,
       });
     }
+  }
+
+  /**
+   * get all flowtick container elements in the current view
+   */
+  private getAllFlowTickContainers() {
+    const { mode } = this.currentViewInfo;
+    // Find DOM elements
+    const querySelector =
+      mode === 'source'
+        ? `.${this.SOURCE_VIEW_CLASS_NAME} .${this.FLOWTICK_CONTAINER_CLASS_NAME}`
+        : `.${this.PREVIEW_VIEW_CLASS_NAME} .${this.FLOWTICK_CONTAINER_CLASS_NAME}`;
+
+    const elements = document.querySelectorAll(querySelector);
+
+    return elements;
   }
 }
