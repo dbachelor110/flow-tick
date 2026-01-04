@@ -31,7 +31,7 @@ class FlowTickSettingTab extends PluginSettingTab {
 
     new Setting(containerEl)
       .setName('Tick update interval')
-      .setDesc('How often FlowTick progress bars re-render (ms)')
+      .setDesc('How often flow tick progress bars re-render (ms)')
       .addText((text) =>
         text
           .setValue(String(this.plugin.settings.tickUpdateInterval))
