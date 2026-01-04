@@ -27,11 +27,12 @@ class FlowTickChild extends MarkdownRenderChild {
   static readonly BAR_CLASS_NAME = 'flowtick-bar';
   static readonly FILL_CLASS_NAME = 'flowtick-fill';
 
-  startLine: number;
   progress: number;
 
+  readonly id: string = crypto.randomUUID();
   readonly plugin: Plugin;
   readonly CURRENT_VIEW_MODE: MarkdownViewModeType;
+  readonly ctx: MarkdownPostProcessorContext;
   readonly getProgressColor = getProgressColor;
   readonly onunloadCallback: FlowTickChildOption['onunloadCallback'];
   private checklistAnalyzer: ChecklistAnalyzer;
@@ -53,9 +54,9 @@ class FlowTickChild extends MarkdownRenderChild {
     this.plugin = plugin;
     this.onunloadCallback = onunloadCallback;
     this.progress = progress;
+    this.ctx = ctx;
     this.logger = logger ?? console;
 
-    this.startLine = this.getElementLineNumber(containerEl, ctx);
     this.checklistAnalyzer = new ChecklistAnalyzer(this.plugin.app);
   }
 
@@ -96,6 +97,11 @@ class FlowTickChild extends MarkdownRenderChild {
 
     const cache = this.plugin.app.metadataCache.getFileCache(activeFile);
     return cache?.sections ?? [];
+  }
+
+  get startLine() {
+    const startLine = this.getStartLineForBlock();
+    return startLine;
   }
 
   get endLine(): number | undefined {
@@ -156,11 +162,8 @@ class FlowTickChild extends MarkdownRenderChild {
     );
   }
 
-  private getElementLineNumber(
-    element: HTMLElement,
-    ctx: MarkdownPostProcessorContext
-  ) {
-    const sectionInfo = ctx.getSectionInfo(element);
+  private getStartLineForBlock() {
+    const sectionInfo = this.ctx.getSectionInfo(this.containerElement);
     return sectionInfo?.lineStart ?? -1;
   }
 

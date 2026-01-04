@@ -13,10 +13,10 @@ const { logger, setDebug } = useLogger(false, ['log', 'info']);
 export default class FlowTick extends Plugin {
   settings: FlowTickSettings;
 
-  /** table to store all flowtick children by view mode and start line */
+  /** table to store all flowtick children by view mode and id */
   flowTickChildTable = {
-    source: new Map<number, FlowTickChild>(),
-    preview: new Map<number, FlowTickChild>(),
+    source: new Map<string, FlowTickChild>(),
+    preview: new Map<string, FlowTickChild>(),
   };
 
   /** updating flag */
@@ -62,16 +62,16 @@ export default class FlowTick extends Plugin {
           ctx,
           plugin: this,
           onunloadCallback: (flowTickChild) => {
-            const { startLine } = flowTickChild;
+            const { id } = flowTickChild;
             const { mode } = flowTickChild.currentViewInfo;
-            this.flowTickChildTable[mode].delete(startLine);
+            this.flowTickChildTable[mode].delete(id);
           },
         });
 
         ctx.addChild(flowtickChild);
 
         // Register the flowtick container for later updates
-        this.registerFlowTickChild(flowtickChild, flowtickChild.startLine);
+        this.registerFlowTickChild(flowtickChild, flowtickChild.id);
       }
     );
 
@@ -91,13 +91,10 @@ export default class FlowTick extends Plugin {
     this.setDebug(this.settings.debug);
   }
 
-  private registerFlowTickChild(
-    flowtTickChild: FlowTickChild,
-    startLine: number
-  ) {
+  private registerFlowTickChild(flowtTickChild: FlowTickChild, id: string) {
     const currentViewMode = this.currentViewInfo.mode;
 
-    this.flowTickChildTable[currentViewMode].set(startLine, flowtTickChild);
+    this.flowTickChildTable[currentViewMode].set(id, flowtTickChild);
   }
 
   private async updateAllFlowTick() {
