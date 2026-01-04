@@ -1,3 +1,9 @@
+## [1.4.1](https://github.com/dbachelor110/flow-tick/compare/1.4.0...1.4.1) (2026-01-04)
+
+### Bug Fixes
+
+* migrate from yarn to npm and add dependency overrides ([d8cb470](https://github.com/dbachelor110/flow-tick/commit/d8cb470aa181122f8d31d5e14957f84801a8c7d4))
+
 ## [1.4.0](https://github.com/dbachelor110/flow-tick/compare/1.3.0...1.4.0) (2026-01-04)
 
 ### Features
