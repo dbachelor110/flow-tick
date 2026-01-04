@@ -1,3 +1,13 @@
+## [1.4.0](https://github.com/dbachelor110/flow-tick/compare/1.3.0...1.4.0) (2026-01-04)
+
+### Features
+
+* **checklist:** implement ChecklistAnalyzer for managing list items and progress tracking ([c868983](https://github.com/dbachelor110/flow-tick/commit/c86898309b4dbb4c3c2d204ac859b0378024362b))
+
+### Bug Fixes
+
+* **main:** enhance flowtick synchronization and update handling ([4da6fc4](https://github.com/dbachelor110/flow-tick/commit/4da6fc4fdd17222c932ab050ea57de88e5b92161))
+
 ## [1.3.0](https://github.com/dbachelor110/flow-tick/compare/v1.2.0...1.3.0) (2026-01-03)
 
 ### Features
