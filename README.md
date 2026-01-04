@@ -4,7 +4,7 @@ FlowTick is an Obsidian plugin that automatically generates and updates a progre
 
 It's perfect for tracking progress on long task lists, project milestones, or any document with checklists. The progress bar gives you a quick visual indicator of how much you've completed.
 
-![FlowTick Demo](https://github.com/user-attachments/assets/f355cf10-298b-410e-892c-894447c1e6eb)
+![FlowTick Demo](https://github.com/user-attachments/assets/db4db79a-50fb-4b28-95b2-dea6c0babc01)
 
 ## Features
 
