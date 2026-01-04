@@ -3,10 +3,17 @@
 	"name": "FlowTick",
 	"minAppVersion": "0.15.0",
 	"description": "Auto-updating progress bar based on checkbox ratio using flowtick code blocks.",
-	"keywords": ["progress bar", "auto-updating", "tasks", "flowtick", "productivity", "checkbox"],
+	"keywords": [
+		"progress bar",
+		"auto-updating",
+		"tasks",
+		"flowtick",
+		"productivity",
+		"checkbox"
+	],
 	"author": "mmaoteacher",
 	"authorUrl": "https://github.com/dbachelor110",
 	"fundingUrl": "https://buymeacoffee.com/mmaoteacher",
 	"isDesktopOnly": false,
-	"version": "1.3.0"
+	"version": "1.4.0-develop.1"
 }
