@@ -1,6 +1,6 @@
 {
 	"name": "flowtick",
-	"version": "1.5.0",
+	"version": "1.6.0-develop.1",
 	"description": "Auto-updating progress bar based on checkbox ratio using flowtick code blocks.",
 	"main": "main.js",
 	"type": "module",

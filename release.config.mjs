@@ -73,6 +73,7 @@ const config = {
       '@saithodev/semantic-release-backmerge',
       {
         backmergeStrategy: 'rebase',
+        forcePush: true,
         backmergeBranches: [
           {
             from: 'main',
