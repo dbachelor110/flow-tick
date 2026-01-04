@@ -30,7 +30,7 @@ class FlowTickSettingTab extends PluginSettingTab {
     containerEl.empty();
 
     new Setting(containerEl)
-      .setName('Tick Update Interval')
+      .setName('Tick update interval')
       .setDesc('How often FlowTick progress bars re-render (ms)')
       .addText((text) =>
         text
@@ -42,11 +42,11 @@ class FlowTickSettingTab extends PluginSettingTab {
       );
 
     new Setting(containerEl)
-      .setName('Color Mode')
+      .setName('Color mode')
       .setDesc('Default color rule: 1-20 red, 21-99 green, 100 blue')
       .addDropdown((drop) =>
         drop
-          .addOption('default', 'Default Color Mode')
+          .addOption('default', 'Default color mode')
           .setValue(this.plugin.settings.colorMode)
           .onChange(async (value) => {
             if (value !== 'default') {
@@ -59,7 +59,7 @@ class FlowTickSettingTab extends PluginSettingTab {
       );
 
     new Setting(containerEl)
-      .setName('Debug Mode')
+      .setName('Debug mode')
       .setDesc('Enable or disable debug logging')
       .addToggle((toggle) =>
         toggle.setValue(this.plugin.settings.debug).onChange(async (value) => {
