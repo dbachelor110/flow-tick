@@ -1,13 +1,15 @@
 import { App, Plugin, PluginSettingTab, Setting } from 'obsidian';
 
-export interface FlowTickSettings {
-  refreshInterval: number;
+interface FlowTickSettings {
+  tickUpdateInterval: number;
   colorMode: 'default';
+  debug: boolean;
 }
 
-export const DEFAULT_SETTINGS: FlowTickSettings = {
-  refreshInterval: 1000,
+const DEFAULT_SETTINGS: FlowTickSettings = {
+  tickUpdateInterval: 1000,
   colorMode: 'default',
+  debug: false,
 };
 
 interface FlowTickPlugin extends Plugin {
@@ -15,7 +17,7 @@ interface FlowTickPlugin extends Plugin {
   saveSettings(): Promise<void>;
 }
 
-export class FlowTickSettingTab extends PluginSettingTab {
+class FlowTickSettingTab extends PluginSettingTab {
   plugin: FlowTickPlugin;
 
   constructor(app: App, plugin: FlowTickPlugin) {
@@ -28,13 +30,13 @@ export class FlowTickSettingTab extends PluginSettingTab {
     containerEl.empty();
 
     new Setting(containerEl)
-      .setName('Refresh Interval')
+      .setName('Tick Update Interval')
       .setDesc('How often FlowTick progress bars re-render (ms)')
       .addText((text) =>
         text
-          .setValue(String(this.plugin.settings.refreshInterval))
+          .setValue(String(this.plugin.settings.tickUpdateInterval))
           .onChange(async (value) => {
-            this.plugin.settings.refreshInterval = Number(value);
+            this.plugin.settings.tickUpdateInterval = Number(value);
             await this.plugin.saveSettings();
           })
       );
@@ -55,5 +57,19 @@ export class FlowTickSettingTab extends PluginSettingTab {
             await this.plugin.saveSettings();
           })
       );
+
+    new Setting(containerEl)
+      .setName('Debug Mode')
+      .setDesc('Enable or disable debug logging')
+      .addToggle((toggle) =>
+        toggle.setValue(this.plugin.settings.debug).onChange(async (value) => {
+          this.plugin.settings.debug = value;
+          await this.plugin.saveSettings();
+        })
+      );
   }
 }
+
+export type { FlowTickSettings };
+
+export { DEFAULT_SETTINGS, FlowTickSettingTab };

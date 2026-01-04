@@ -1,3 +1,8 @@
+/**
+ * getProgressColor
+ * @param progress A number between 0 and 100 representing the completion percentage.
+ * @returns A string representing the color corresponding to the progress.
+ */
 function getProgressColor(progress: number): string {
   if (progress >= 100) {
     return 'var(--color-blue)';
@@ -22,4 +27,4 @@ function renderFlowTickBar(flowTickContainerEl: Element, progress: number) {
   flowtickFillEl.setAttr('style', `width:${progress}%; background:${color};`);
 }
 
-export { renderFlowTickBar };
+export { renderFlowTickBar, getProgressColor };

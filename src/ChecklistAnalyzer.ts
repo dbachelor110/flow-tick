@@ -1,13 +1,13 @@
 import { App, ListItemCache } from 'obsidian';
 
-export interface ListItemNode {
+interface ListItemNode {
   item: ListItemCache;
   line: number;
   task: string | undefined;
   childrenTable: Map<string, ListItemNode>;
 }
 
-export class ChecklistAnalyzer {
+class ChecklistAnalyzer {
   constructor(private app: App) {}
 
   getListItemsInRange(startLine?: number, endLine?: number): ListItemCache[] {
@@ -27,6 +27,11 @@ export class ChecklistAnalyzer {
     return itemsInRange ?? [];
   }
 
+  /**
+   * getCompletionRate
+   *
+   * @returns rate - A number between 0 and 1 representing the completion rate of the checklist items in the specified range.
+   */
   getCompletionRate(itemsInRange: ListItemCache[]): number {
     const listItemTable = this.getListItemTable(itemsInRange);
     const topLevelTotal = listItemTable.size;
@@ -105,6 +110,9 @@ export class ChecklistAnalyzer {
       (sum, child) => sum + this.calcCompletion(child),
       0
     );
+
     return sum / total;
   }
 }
+
+export { ChecklistAnalyzer };
