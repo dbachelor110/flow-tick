@@ -1,3 +1,9 @@
+## [1.5.0](https://github.com/dbachelor110/flow-tick/compare/1.4.1...1.5.0) (2026-01-04)
+
+### Features
+
+* **eslint:** add eslint-plugin-obsidianmd rules ([9d20d3d](https://github.com/dbachelor110/flow-tick/commit/9d20d3d028a914b8eaa0409b7a9cb8ddef7eca90))
+
 ## [1.4.1](https://github.com/dbachelor110/flow-tick/compare/1.4.0...1.4.1) (2026-01-04)
 
 ### Bug Fixes
