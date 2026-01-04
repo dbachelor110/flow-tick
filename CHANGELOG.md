@@ -1,3 +1,13 @@
+## [1.6.0](https://github.com/dbachelor110/flow-tick/compare/1.5.0...1.6.0) (2026-01-04)
+
+### Features
+
+* **release.config:** enable force push for semantic-release backmerge ([8d1e908](https://github.com/dbachelor110/flow-tick/commit/8d1e908f944b5080b4703b81f0e6c0705a216635))
+
+### Bug Fixes
+
+* **settings:** update setting description casing ([872eaa4](https://github.com/dbachelor110/flow-tick/commit/872eaa45ba0d17947911a6faab6dec78e67cc8ce))
+
 ## [1.5.0](https://github.com/dbachelor110/flow-tick/compare/1.4.1...1.5.0) (2026-01-04)
 
 ### Features
