@@ -50,7 +50,7 @@ export default class FlowTick extends Plugin {
     // Handle ```flowtick``` code blocks
     this.registerMarkdownCodeBlockProcessor(
       'flowtick',
-      async (_source, element, ctx) => {
+      (_source, element, ctx) => {
         this.logger.log('in registerMarkdownCodeBlockProcessor');
 
         // Create or update the current flowtick container
