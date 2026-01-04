@@ -2,6 +2,7 @@ import js from '@eslint/js';
 import stylistic from '@stylistic/eslint-plugin';
 import importPlugin from 'eslint-plugin-import';
 import node from 'eslint-plugin-n';
+import obsidianmd from 'eslint-plugin-obsidianmd';
 import eslintPluginPrettier from 'eslint-plugin-prettier';
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
 import tseslint from 'typescript-eslint';
@@ -27,6 +28,7 @@ export default [
   eslintPluginPrettierRecommended,
   {
     plugins: {
+      obsidianmd: obsidianmd,
       '@typescript-eslint': tseslint.plugin,
       import: importPlugin,
       prettier: eslintPluginPrettier,
@@ -43,6 +45,32 @@ export default [
     },
 
     rules: {
+      // obsidianmd plugin rules
+      'obsidianmd/ui/sentence-case': [
+        'error',
+        {
+          enforceCamelCaseLower: true,
+          brands: ['FlowTick', 'Obsidian'],
+          acronyms: ['ID', 'UUID', 'OK'],
+        },
+      ],
+      'obsidianmd/no-forbidden-elements': 'error',
+      'obsidianmd/no-static-styles-assignment': 'error',
+      'obsidianmd/no-tfile-tfolder-cast': 'error',
+      'obsidianmd/platform': 'error',
+      'no-restricted-globals': [
+        'error',
+        {
+          name: 'app',
+          message:
+            'Avoid using global "app". Use "this.app" from your plugin instance.',
+        },
+        {
+          name: 'fetch',
+          message: 'Use "requestUrl" from "obsidian" instead of "fetch".',
+        },
+      ],
+
       'prettier/prettier': [
         'error',
         {
