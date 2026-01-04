@@ -4,7 +4,7 @@ FlowTick is an Obsidian plugin that automatically generates and updates a progre
 
 It's perfect for tracking progress on long task lists, project milestones, or any document with checklists. The progress bar gives you a quick visual indicator of how much you've completed.
 
-![FlowTick Demo](https://raw.githubusercontent.com/ice-first/obsidian-flow-tick/main/assets/demo.gif)
+![FlowTick Demo](https://github.com/user-attachments/assets/f355cf10-298b-410e-892c-894447c1e6eb)
 
 ## Features
 
@@ -28,7 +28,8 @@ It's perfect for tracking progress on long task lists, project milestones, or an
 Here is a simple example:
 
 ````markdown
-` ``flowtick`` `
+```flowtick
+```
 
 - [x] Task 1
 - [ ] Task 2
@@ -46,8 +47,11 @@ In this example:
 
 ## Settings
 
-You can configure the refresh interval for the progress bars in the plugin settings tab.
-- **Refresh Interval (ms)**: The time in milliseconds between each update of the progress bars. The default is `1000` (1 second).
+You can configure the behavior of FlowTick in the plugin settings tab.
+
+-   **Tick Update Interval (ms)**: How often FlowTick progress bars re-render. The default is `1000` (1 second).
+-   **Color Mode**: Choose the color scheme for the progress bar. Currently supports a default mode (Red < 21%, Green < 100%, Blue 100%).
+-   **Debug Mode**: Enable or disable debug logging to the console. Useful for troubleshooting.
 
 ## How to Install
 
@@ -71,7 +75,7 @@ You can configure the refresh interval for the progress bars in the plugin setti
 
 ## Contributing
 
-Contributions, issues, and feature requests are welcome! Feel free to check the [issues page](https://github.com/ice-first/obsidian-flow-tick/issues).
+Contributions, issues, and feature requests are welcome! Feel free to check the [issues page](https://github.com/dbachelor110/flow-tick/issues).
 
 ## Support
 
