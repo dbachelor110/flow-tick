@@ -15,16 +15,19 @@ It allows users to insert ` ```flowtick ``` ` code blocks into their notes. The 
 *   **Multiple Bars:** Supports multiple tracked sections in a single file.
 
 ### Architecture
-*   **Entry Point:** `main.ts` - Handles plugin lifecycle, registers code block processor, and manages the update loop.
-*   **Settings:** `src/settings.ts` - Manages plugin settings (refresh interval, color mode).
+*   **Entry Point:** `main.ts` - Handles plugin lifecycle, registers code block processor, and manages `FlowTickChild` instances via `flowTickChildTable`.
+*   **Component Logic:** `src/FlowTickChild.ts` - Encapsulates logic for individual flowtick blocks, including lifecycle management and rendering.
+*   **Analysis:** `src/ChecklistAnalyzer.ts` - Centralized logic for finding checklist items and calculating completion rates.
+*   **Settings:** `src/settings.ts` - Manages plugin settings (`tickUpdateInterval`, `colorMode`, `debug`).
 *   **Rendering:** `src/progress.ts` - Handles the DOM manipulation to draw the progress bar.
+*   **Utilities:** `src/useLogger.ts` - Provides conditional debug logging.
 *   **Build System:** `esbuild` bundled via `esbuild.config.mjs`.
 
 ## Building and Running
 
 ### Prerequisites
-*   Node.js (>=16 recommended)
-*   npm or yarn
+*   Node.js (>=24 recommended)
+*   npm
 
 ### Key Commands
 
@@ -53,7 +56,10 @@ It allows users to insert ` ```flowtick ``` ` code blocks into their notes. The 
 
 ## File Structure
 
-*   `main.ts`: Main plugin class, logic for finding list items and calculating progress.
+*   `main.ts`: Main plugin class, manages `FlowTickChild` instances.
+*   `src/FlowTickChild.ts`: Component class for individual FlowTick blocks.
+*   `src/ChecklistAnalyzer.ts`: Logic for analyzing checklist items and calculating progress.
+*   `src/useLogger.ts`: Logging utility.
 *   `src/progress.ts`: Pure UI logic for rendering the bar.
 *   `src/settings.ts`: Settings tab implementation.
 *   `styles.css`: CSS for the progress bar appearance.
