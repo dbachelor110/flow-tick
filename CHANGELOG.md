@@ -1,3 +1,9 @@
+## [1.6.1](https://github.com/dbachelor110/flow-tick/compare/1.6.0...1.6.1) (2026-01-17)
+
+### Bug Fixes
+
+* **keywords:** remove invalid keywords ([f0b2f54](https://github.com/dbachelor110/flow-tick/commit/f0b2f54ae05493bf4e4b1843dcc52422c9735c13))
+
 ## [1.6.0](https://github.com/dbachelor110/flow-tick/compare/1.5.0...1.6.0) (2026-01-04)
 
 ### Features
