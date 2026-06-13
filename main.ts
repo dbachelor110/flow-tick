@@ -11,8 +11,6 @@ import { useLogger } from 'src/useLogger';
 const { logger, setDebug } = useLogger(false, ['log', 'info']);
 
 export default class FlowTick extends Plugin {
-  settings: FlowTickSettings;
-
   /** table to store all flowtick children by view mode and id */
   flowTickChildTable = {
     source: new Map<string, FlowTickChild>(),
@@ -25,6 +23,16 @@ export default class FlowTick extends Plugin {
   // about logger
   private logger = logger;
   private setDebug = setDebug;
+
+  private settingsBuffer?: FlowTickSettings;
+
+  get settings() {
+    if (!this.settingsBuffer) {
+      throw Error('settings not init before load');
+    }
+
+    return this.settingsBuffer;
+  }
 
   get currentViewInfo() {
     const activeView = this.app.workspace.getActiveViewOfType(MarkdownView);
@@ -82,7 +90,11 @@ export default class FlowTick extends Plugin {
   }
 
   async loadSettings() {
-    this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+    this.settingsBuffer = Object.assign(
+      {},
+      DEFAULT_SETTINGS,
+      await this.loadData()
+    );
     this.setDebug(this.settings.debug);
   }
 

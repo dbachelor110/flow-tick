@@ -15,6 +15,7 @@ permissions:
   issues: write # to be able to comment on released issues
   pull-requests: write # to be able to comment on released pull requests
   id-token: write # to enable use of OIDC for npm provenance
+  attestations: write # to persist the artifact attestation
 
 jobs:
   release:
@@ -33,10 +34,17 @@ jobs:
           node-version: "lts/*"
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: npm ci
 
       - name: Build
-        run: yarn build
+        run: npm run build
+
+      - name: Generate artifact attestation
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: |
+            main.js
+            styles.css
 
       - name: Release
         env:
