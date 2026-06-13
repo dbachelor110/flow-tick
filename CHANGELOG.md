@@ -1,3 +1,10 @@
+## [1.6.3](https://github.com/dbachelor110/flow-tick/compare/1.6.2...1.6.3) (2026-06-13)
+
+### Bug Fixes
+
+* **main:** resolve type error of settings ([6a2a6d6](https://github.com/dbachelor110/flow-tick/commit/6a2a6d6d52e3e3bab51061b2ae417a41431c86ad))
+* **tsconfig:** make tsconfig fit in json style ([739f6e5](https://github.com/dbachelor110/flow-tick/commit/739f6e59267a2219ec4d83e2bda70368c66144ad))
+
 ## [1.6.2](https://github.com/dbachelor110/flow-tick/compare/1.6.1...1.6.2) (2026-01-17)
 
 ### Bug Fixes
